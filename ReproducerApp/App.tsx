@@ -5,10 +5,9 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { useEffect } from 'react';
 import {
   Alert,
+  Button,
   Image,
   StatusBar,
   StyleSheet,
@@ -25,7 +24,7 @@ const BASE64_PNG =
   'iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==';
 
 function DataUriGetSizeRepro() {
-  useEffect(() => {
+  const handlePress = () => {
     Image.getSize(
       `data:image/png;base64,${BASE64_PNG}`,
       (width, height) => {
@@ -35,17 +34,18 @@ function DataUriGetSizeRepro() {
         Alert.alert('getSize error', String(error));
       },
     );
-  }, []);
+  }
 
   return (
     <View style={styles.repro}>
-      {/* Confirms the same data: URI renders fine with <Image>, isolating the
-          bug to Image.getSize() / getSizeWithHeaders() specifically. */}
       <Image
         source={{ uri: `data:image/png;base64,${BASE64_PNG}` }}
         style={styles.reproImage}
         resizeMode="contain"
       />
+      <View>
+        <Button title="getSize" onPress={handlePress} />
+      </View>
     </View>
   );
 }
@@ -65,12 +65,8 @@ function AppContent() {
   const safeAreaInsets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: safeAreaInsets.top, paddingBottom: safeAreaInsets.bottom }]}>
       <DataUriGetSizeRepro />
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
     </View>
   );
 }
@@ -80,9 +76,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   repro: {
-    padding: 16,
-    backgroundColor: '#fff3cd',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 24,
+    flex: 1,
   },
   reproImage: {
     width: 51,
